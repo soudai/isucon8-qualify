@@ -1,0 +1,1 @@
+{"target":"Starlet","provides":{"Plack::Handler::Starlet":{"file":"lib/Plack/Handler/Starlet.pm"},"Starlet":{"file":"lib/Starlet.pm","version":0.31},"Starlet::Server":{"file":"lib/Starlet/Server.pm"}},"pathname":"K/KA/KAZUHO/Starlet-0.31.tar.gz","name":"Starlet","version":0.31,"dist":"Starlet-0.31"}
