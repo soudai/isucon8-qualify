@@ -78,7 +78,7 @@ module Torb
 
         # zero fill
         event['total']   = 0
-        event['remains'] = 0
+        event['remains'] = 1000
         event['sheets'] = {}
         %w[S A B C].each do |rank|
           event['sheets'][rank] = { 'total' => 0, 'remains' => 0, 'detail' => [] }
@@ -115,6 +115,7 @@ module Torb
               sheet['reserved_at'] = r['reserved_at'].to_i
               sheet['mine'] = true if login_user_id && r['user_id'] == login_user_id
               remains -= 1
+              events['remains'] -= 1
             end
             event['sheets'][rank]['detail'].push(sheet)
           end
