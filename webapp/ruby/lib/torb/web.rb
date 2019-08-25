@@ -307,7 +307,7 @@ module Torb
         db.query('BEGIN')
         begin
           now = Time.now.utc.strftime('%F %T.%6N')
-          db.xquery('INSERT INTO reservations (event_id, sheet_id, user_id, reserved_at) VALUES (?, ?, ?, ?)', event['id'], sheet['id'], user['id'], now)
+          db.xquery('INSERT INTO reservations (event_id, sheet_id, user_id, reserved_at) VALUES (?, ?, ?, ?)', event['id'], sheet['sheet_id'], user['id'], now)
           reservation_id = db.last_id
 
           # db.xquery('UPDATE remains SET user_id = ?, reserved_at = ? WHERE event_id = ? AND `rank` = ? AND num = ?', user['id'], now, event_id, rank, sheet['num'])
