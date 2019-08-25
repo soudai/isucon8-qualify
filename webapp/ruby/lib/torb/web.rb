@@ -300,12 +300,17 @@ module Torb
       sheet = nil
       reservation_id = nil
       loop do
-        sheet = db.xquery('SELECT * FROM sheets WHERE id NOT IN (SELECT sheet_id FROM reservations WHERE event_id = ? AND canceled_at IS NULL FOR UPDATE) AND `rank` = ? ORDER BY RAND() LIMIT 1', event['id'], rank).first
+        # sheet = db.xquery('SELECT * FROM sheets WHERE id NOT IN (SELECT sheet_id FROM reservations WHERE event_id = ? AND canceled_at IS NULL FOR UPDATE) AND `rank` = ? ORDER BY RAND() LIMIT 1', event['id'], rank).first
+        sheet = db.xquery('SELECT * FROM remains WHERE event_id = ? AND `rank` = ? AND user_id = 0 LIMIT 1', event['id'], rank).first
         halt_with_error 409, 'sold_out' unless sheet
         db.query('BEGIN')
         begin
-          db.xquery('INSERT INTO reservations (event_id, sheet_id, user_id, reserved_at) VALUES (?, ?, ?, ?)', event['id'], sheet['id'], user['id'], Time.now.utc.strftime('%F %T.%6N'))
+          now = Time.now.utc.strftime('%F %T.%6N')
+          db.xquery('INSERT INTO reservations (event_id, sheet_id, user_id, reserved_at) VALUES (?, ?, ?, ?)', event['id'], sheet['id'], user['id'], now)
           reservation_id = db.last_id
+
+          db.xquery('UPDATE remains SET user_id = ?, reserved_at = ? WHERE event_id = ? AND `rank` = ?', user['id'], now, event_id, rank)
+
           db.query('COMMIT')
         rescue => e
           db.query('ROLLBACK')
@@ -340,6 +345,8 @@ module Torb
           db.query('ROLLBACK')
           halt_with_error 403, 'not_permitted'
         end
+
+        db.xquery('UPDATE remains SET user_id = 0 WHERE event_id = ? AND `rank` = ? AND user_id = ?', event_id, rank, user['id'])
 
         db.xquery('UPDATE reservations SET canceled_at = ? WHERE id = ?', Time.now.utc.strftime('%F %T.%6N'), reservation['id'])
         db.query('COMMIT')
