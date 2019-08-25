@@ -44,12 +44,6 @@ CREATE TABLE IF NOT EXISTS remains (
     KEY event_id_rank (event_id, `rank`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE _sheets LIKE sheets;
-
-CREATE TRIGGER create_remains AFTER INSERT ON events
-FOR EACH ROW
-INSERT INTO remains(event_id, `rank`, num, price, sheet_id) SELECT NEW.id AS event_id, `rank`, num, price, id from _sheets ORDER BY RAND();
-
 CREATE TABLE IF NOT EXISTS administrators (
     id          INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     nickname    VARCHAR(128) NOT NULL,
