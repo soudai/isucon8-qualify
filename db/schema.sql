@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS reservations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS remains (
+    id          INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     event_id    INTEGER UNSIGNED NOT NULL,
     `rank`      VARCHAR(128)     NOT NULL,
     num         INTEGER UNSIGNED NOT NULL,
@@ -46,7 +47,7 @@ CREATE TABLE _sheets LIKE sheets;
 
 CREATE TRIGGER create_remains AFTER INSERT ON events
 FOR EACH ROW
-INSERT INTO remains(event_id, `rank`, num, price) SELECT NEW.id AS event_id, `rank`, num, price from _sheets;
+INSERT INTO remains(event_id, `rank`, num, price) SELECT NEW.id AS event_id, `rank`, num, price from _sheets ORDER BY RAND();
 
 CREATE TABLE IF NOT EXISTS administrators (
     id          INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
