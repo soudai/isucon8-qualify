@@ -21,3 +21,5 @@ gzip -dc "$DB_DIR/isucon8q-initial-dataset.sql.gz" | mysql -uisucon torb
 mysql -uisucon torb -e 'ALTER TABLE reservations ADD KEY event_id_and_sheet_id_idx (event_id, sheet_id)'
 
 mysql -uisucon torb -e 'ALTER TABLE reservations ADD KEY reservations_sheet_id_user_id_index (sheet_id, user_id)'
+
+mysql -uisucon torb < "$DB_DIR/triggers.sql"

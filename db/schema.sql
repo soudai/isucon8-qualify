@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS remains (
     `rank`      VARCHAR(128)     NOT NULL,
     num         INTEGER UNSIGNED NOT NULL,
     price       INTEGER UNSIGNED NOT NULL,
+    sheet_id    INTEGER UNSIGNED NOT NULL,
     user_id     INTEGER UNSIGNED NOT NULL DEFAULT 0,
     reserved_at DATETIME(6)      DEFAULT NULL,
     KEY event_id_rank (event_id, `rank`)
@@ -47,7 +48,7 @@ CREATE TABLE _sheets LIKE sheets;
 
 CREATE TRIGGER create_remains AFTER INSERT ON events
 FOR EACH ROW
-INSERT INTO remains(event_id, `rank`, num, price) SELECT NEW.id AS event_id, `rank`, num, price from _sheets ORDER BY RAND();
+INSERT INTO remains(event_id, `rank`, num, price, sheet_id) SELECT NEW.id AS event_id, `rank`, num, price, id from _sheets ORDER BY RAND();
 
 CREATE TABLE IF NOT EXISTS administrators (
     id          INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
