@@ -37,8 +37,9 @@ CREATE TABLE IF NOT EXISTS remains (
     `rank`      VARCHAR(128)     NOT NULL,
     num         INTEGER UNSIGNED NOT NULL,
     price       INTEGER UNSIGNED NOT NULL,
-    user_id     INTEGER UNSIGNED NOT NULL,
-    UNIQUE KEY rank_num_uniq (event_id, `rank`)
+    user_id     INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    reserved_at DATETIME(6)      DEFAULT NULL,
+    UNIQUE KEY event_id_rank_num_uniq (event_id, `rank`, num)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS administrators (
