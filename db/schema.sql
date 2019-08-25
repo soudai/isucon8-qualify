@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS remains (
     price       INTEGER UNSIGNED NOT NULL,
     user_id     INTEGER UNSIGNED NOT NULL DEFAULT 0,
     reserved_at DATETIME(6)      DEFAULT NULL,
-    UNIQUE KEY event_id_rank_num_uniq (event_id, `rank`, num)
+    KEY event_id_rank (event_id, `rank`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE _sheets LIKE sheets;
