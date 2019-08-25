@@ -115,7 +115,7 @@ module Torb
               sheet['reserved_at'] = r['reserved_at'].to_i
               sheet['mine'] = true if login_user_id && r['user_id'] == login_user_id
               remains -= 1
-              events['remains'] -= 1
+              event['remains'] -= 1
             end
             event['sheets'][rank]['detail'].push(sheet)
           end
