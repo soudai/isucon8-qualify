@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS sheets (
     UNIQUE KEY rank_num_uniq (`rank`, num)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE _sheets LIKE sheets;
+
 CREATE TABLE IF NOT EXISTS reservations (
     id          INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     event_id    INTEGER UNSIGNED NOT NULL,

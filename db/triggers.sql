@@ -1,5 +1,3 @@
-CREATE TABLE _sheets LIKE sheets;
-
 CREATE TRIGGER create_remains AFTER INSERT ON events
 FOR EACH ROW
 INSERT INTO remains(event_id, `rank`, num, price, sheet_id) SELECT NEW.id AS event_id, `rank`, num, price, id from _sheets ORDER BY RAND();
