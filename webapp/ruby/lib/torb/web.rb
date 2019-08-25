@@ -309,7 +309,7 @@ module Torb
           db.xquery('INSERT INTO reservations (event_id, sheet_id, user_id, reserved_at) VALUES (?, ?, ?, ?)', event['id'], sheet['id'], user['id'], now)
           reservation_id = db.last_id
 
-          db.xquery('UPDATE remains SET user_id = ?, reserved_at = ? WHERE event_id = ? AND `rank` = ?', user['id'], now, event_id, rank)
+          db.xquery('UPDATE remains SET user_id = ?, reserved_at = ? WHERE event_id = ? AND `rank` = ? AND num = ?', user['id'], now, event_id, rank, sheet['num'])
 
           db.query('COMMIT')
         rescue => e
@@ -346,7 +346,7 @@ module Torb
           halt_with_error 403, 'not_permitted'
         end
 
-        db.xquery('UPDATE remains SET user_id = 0 WHERE event_id = ? AND `rank` = ? AND user_id = ?', event_id, rank, user['id'])
+        db.xquery('UPDATE remains SET user_id = 0 WHERE event_id = ? AND `rank` = ? AND num = ? AND user_id = ?', event_id, rank, num, user['id'])
 
         db.xquery('UPDATE reservations SET canceled_at = ? WHERE id = ?', Time.now.utc.strftime('%F %T.%6N'), reservation['id'])
         db.query('COMMIT')
