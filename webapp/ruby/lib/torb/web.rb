@@ -84,27 +84,41 @@ module Torb
           event['sheets'][rank] = { 'total' => 0, 'remains' => 0, 'detail' => [] }
         end
 
-        sheets = db.query('SELECT * FROM sheets ORDER BY `rank`, num')
-        sheets.each do |sheet|
-          event['sheets'][sheet['rank']]['price'] ||= event['price'] + sheet['price']
-          event['total'] += 1
-          event['sheets'][sheet['rank']]['total'] += 1
+        reserved = {}
+        db.xquery('SELECT * FROM remains WHERE event_id = ? and user_id != 0', event_id).each do |remain|
+          reserved[remain['rank']] = {} unless reserved[remain['rank']]
+          reserved[remain['rank']][remain['num']] = remain
+        end
 
-          reservation = db.xquery('SELECT * FROM reservations WHERE event_id = ? AND sheet_id = ? AND canceled_at IS NULL GROUP BY event_id, sheet_id HAVING reserved_at = MIN(reserved_at)', event['id'], sheet['id']).first
-          if reservation
-            sheet['mine']        = true if login_user_id && reservation['user_id'] == login_user_id
-            sheet['reserved']    = true
-            sheet['reserved_at'] = reservation['reserved_at'].to_i
-          else
-            event['remains'] += 1
-            event['sheets'][sheet['rank']]['remains'] += 1
+        totals = {
+          'S' => 50,
+          'A' => 150,
+          'B' => 300,
+          'C' => 500
+        }
+        event['total'] = 1000
+        %w[S A B C].each do |rank|
+          price = event['price']
+          price += 5000 if rank == 'S'
+          price += 3000 if rank == 'A'
+          price += 1000 if rank == 'B'
+
+          event['sheets'][rank]['price'] = price
+          event['sheets'][rank]['total'] = totals[rank]
+        end
+        totals.each do |rank, n|
+          remains = n
+          n.times do |num|
+            sheet = { num: num + 1 }
+            if (r = reserved[rank] && reserved[rank][num + 1])
+              sheet['reserved'] = true
+              sheet['reserved_at'] = r['reserved_at'].to_i
+              sheet['mine'] = true if login_user_id && r['user_id'] == login_user_id
+              remains -= 1
+            end
+            event['sheets'][rank]['detail'].push(sheet)
           end
-
-          event['sheets'][sheet['rank']]['detail'].push(sheet)
-
-          sheet.delete('id')
-          sheet.delete('price')
-          sheet.delete('rank')
+          event['sheets'][rank]['remains'] = remains
         end
 
         event['public'] = event.delete('public_fg')
